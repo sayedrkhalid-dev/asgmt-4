@@ -38,4 +38,15 @@
 
 #### Event Bubbling:
 
-- Event bubbling is a JavaScript tecknique where an event triggerd on a chlid element it propagates upward throgh its ancestor elements in the DOM tree like- (child-parent-body-document). It propagates until it reaches document and its JavaScript default mechanism.
+- Event bubbling is a JavaScript default mechanism where an event triggerd on a chlid element it propagates upward throgh its ancestor elements in the DOM tree like- (child-parent-body-document). It propagates until it reaches the root document.
+
+#### Event Delegation:
+
+- Event delegation is a a JavaScript technique where I attach a single event listener to a common parent element to manage events for all of its descendants, rather than attaching individual listeners to each child element.
+
+#### The difference between preventDefault() and stopPropagation() methods:
+
+- event.preventDefault():
+- - stops the default browser action associated with an event (like a link navigating to a new page).
+- stopPropagation():
+- - stops the event from traveling (bubbling or capturing) up or down the DOM hierarchy.
