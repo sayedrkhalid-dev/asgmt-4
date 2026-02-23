@@ -138,7 +138,7 @@ const renderJobs = (jobs) => {
     <div
       class="flex flex-col justify-center items-center gap-2 h-[300px] bg-gray-50 rounded-lg p-4 shadow mt-2 relative"
     >
-      <div class="border w-[100px] aspect-square">
+      <div class="w-[100px] aspect-square">
         <img
           class="w-full aspect-square"
           src="./assets/jobs.png"
