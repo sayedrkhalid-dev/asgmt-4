@@ -89,76 +89,59 @@ const JOBS = [
   },
 ];
 
-let selectedTab = "all";
+const TAB = {all: true, interview: false, rejected: false};
+const STATUS = {interview: 'applied', rejected: 'rejected', pending: 'not applied'};
 
-const updateTab = (tab) => (selectedTab = tab);
+const clearTab = () => Object.keys(TAB).forEach(key => TAB[key] = false);;
+const updateTab = (tab) => TAB[tab] = true;
 
 const updateStatus = (id, status) => {
   const job = JOBS.find((job) => job.id === Number(id));
   if (job) job.status = status;
 };
 
-const deleteJob = (id) => {
+const removeJob = (id) => {
   const index = JOBS.findIndex((job) => job.id === Number(id));
   if (index !== -1) JOBS.splice(index, 1);
 };
 
-const interviewJobs = () =>
-  JOBS.filter((job) => job.status.toLowerCase() === "applied");
+const filterJobs = (status) => status ? JOBS.filter((job => job.status === status)) : JOBS;
 
-const rejectedJobs = () =>
-  JOBS.filter((job) => job.status.toLowerCase() === "rejected");
+const render = () => {
+  const JOBS = {
+    all: filterJobs(null),
+    interview: filterJobs(STATUS.interview),
+    rejected: filterJobs(STATUS.rejected)
+  }
 
-const filteredJobs = (tab) => {
-  return tab === "all"
-    ? JOBS
-    : tab === "interview"
-      ? interviewJobs()
-      : rejectedJobs();
-};
+  const renderAbleJobs = JOBS[Object.keys(JOBS).find(key => TAB[key])];
 
-const updateStats = () => {
-  document.querySelector("#stat-total").textContent = JOBS.length;
-  document.querySelector("#stat-interview").textContent =
-    interviewJobs().length;
-  document.querySelector("#stat-rejected").textContent = rejectedJobs().length;
-};
+  const jobList = () => {
+    if (!renderAbleJobs || renderAbleJobs.length === 0) {
+      return [`<div
+        class="flex flex-col justify-center items-center gap-2 h-[300px] bg-gray-50 rounded-lg p-4 shadow mt-2 relative">
+        
+        <div class="w-[100px] aspect-square">
+          <img
+            class="w-full aspect-square"
+            src="./assets/jobs.png"
+            alt="Job Icon"
+          />
+        </div>
 
-const renderJobs = (jobs) => {
-  const jobListElement = document.querySelector("#job-list");
-  jobListElement.innerHTML = "";
+        <h2 class="text-xl font-semibold">No jobs available</h2>
+        <p class="text-sm text-gray-600">
+          Check back soon for new job opportunities
+        </p>
+      </div>`];
+    } else {
+      const list = [];
 
-  const currentJobs = filteredJobs(selectedTab);
-  document.querySelector("#job-count").textContent = currentJobs.length;
+      for(const job of renderAbleJobs) {
+        const isApplied = job.status.toLowerCase() === "applied";
+        const isRejected = job.status.toLowerCase() === "rejected";
 
-  updateStats();
-
-  if (!jobs || jobs.length === 0) {
-    jobListElement.innerHTML = `
-    <div
-      class="flex flex-col justify-center items-center gap-2 h-[300px] bg-gray-50 rounded-lg p-4 shadow mt-2 relative"
-    >
-      <div class="w-[100px] aspect-square">
-        <img
-          class="w-full aspect-square"
-          src="./assets/jobs.png"
-          alt="Job Icon"
-        />
-      </div>
-
-      <h2 class="text-xl font-semibold">No jobs available</h2>
-      <p class="text-sm text-gray-600">
-        Check back soon for new job opportunities
-      </p>
-    </div>
-    `;
-  } else {
-    for (const job of jobs) {
-      const isApplied = job.status.toLowerCase() === "applied";
-      const isRejected = job.status.toLowerCase() === "rejected";
-
-      const jobElement = `
-      <div
+        const item = `<div
         data-id="${job.id}" data-status="${job.status}"
         class="job-card flex flex-col gap-4 bg-gray-50 rounded-lg p-4 shadow mt-2 relative">
 
@@ -171,7 +154,7 @@ const renderJobs = (jobs) => {
           ${job.location} • ${job.type} • ${job.salary}
         </p>
 
-        <div class="badge-${job.status.toLowerCase().replace(" ", "-")} w-fit text-xs font-semibold text-blue-800 bg-blue-100 px-4 py-2 rounded uppercase select-none">
+        <div class="badge-${job.status.toLowerCase()} w-fit text-xs font-semibold text-blue-800 bg-blue-100 px-4 py-2 rounded uppercase select-none">
           ${job.status}
         </div>
 
@@ -191,51 +174,119 @@ const renderJobs = (jobs) => {
         <div
           class="delete absolute top-4 right-4 w-10 aspect-square border border-gray-300 rounded-full flex justify-center items-center cursor-pointer hover:bg-amber-200"
         >
-          <i class="fa-regular fa-trash-can text-sm text-gray-500"></i>
+          <i class="icon fa-regular fa-trash-can text-sm text-gray-500"></i>
+        </div>
+        </div>`
+
+        list.push(item);
+
+      }
+
+      return list;
+    }
+  };
+
+  document.getElementById("app").innerHTML = 
+    `<div class="flex flex-col gap-4">
+        <h1 class="text-2xl font-semibold">Job Application Tracker</h1>
+
+        <!-- Tracker Cards -->
+        <div class="grid grid-cols-3 gap-4">
+          <div class="flex flex-col bg-gray-50 p-4 rounded-lg shadow">
+            <span class="text-xs font-semibold"> Total Jobs </span>
+            <span class="text-xl font-bold">${JOBS.all.length}</span>
+          </div>
+
+          <div class="flex flex-col bg-gray-50 p-4 rounded-lg shadow">
+            <span class="text-xs font-semibold"> Interview </span>
+            <span class="text-green-500 text-xl font-bold">${JOBS.interview.length}</span
+            >
+          </div>
+
+          <div class="flex flex-col bg-gray-50 p-4 rounded-lg shadow">
+            <span class="text-xs font-semibold"> Rejected </span>
+            <span class="text-red-500 text-xl font-bold"
+              >${JOBS.rejected.length}</span
+            >
+          </div>
         </div>
       </div>
-    `;
 
-      jobListElement.innerHTML += jobElement;
-    }
-  }
+      <hr class="border-t border-gray-300" />
+
+      <!-- Available Jobs -->
+      <div class="flex flex-col gap-2 min-h-0 flex-1">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold">Available Jobs</h2>
+          <div class="text-gray-600 text-sm font-semibold">
+            ${JOBS.all.length} Jobs
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div id="tabs" class="flex gap-2 select-none">
+          <div
+            class="tab ${TAB.all ? 'tab-active' : ''} text-xs bg-gray-50 font-semibold px-4 py-2 rounded-lg shadow cursor-pointer transition-all"
+          >
+            All
+          </div>
+          <div
+            class="tab ${TAB.interview ? 'tab-active' : ''} text-xs bg-gray-50 font-semibold px-4 py-2 rounded-lg shadow cursor-pointer transition-all"
+          >
+            Interview
+          </div>
+          <div
+            class="tab ${TAB.rejected ? 'tab-active' : ''} text-xs bg-gray-50 font-semibold px-4 py-2 rounded-lg shadow cursor-pointer transition-all"
+          >
+            Rejected
+          </div>
+        </div>
+
+        <!-- Jobs -->
+        <div class="flex flex-col">
+          <!-- Job lists -->
+          <div id="job-list">${jobList().join('')}</div>
+        </div>
+      </div>
+    `
 };
 
-document.querySelector("#job-list").addEventListener("click", (e) => {
-  const buttonElement = e.target.closest(".btn");
-  const deleteElement = e.target.closest(".delete");
+document.addEventListener("click", (e) => {
 
-  if (buttonElement && !buttonElement.disabled) {
-    const card = e.target.closest(".job-card");
-    const id = card.dataset.id;
-
-    switch (buttonElement.innerText.trim().toLowerCase()) {
-      case "interview":
-        updateStatus(id, "applied");
-        break;
-      case "rejected":
-        updateStatus(id, "rejected");
-        break;
-    }
-  } else if (deleteElement) {
-    const card = e.target.closest(".job-card");
-    const id = card.dataset.id;
-    deleteJob(id);
+  // Tab button
+  const tab = e.target.closest(".tab");
+  if (tab) {
+    const tabText = tab.innerText.toLowerCase();
+    clearTab();
+    updateTab(tabText);
+    render();
+    return;
   }
 
-  renderJobs(filteredJobs(selectedTab));
+  // Job button click
+  const card = e.target.closest(".job-card");
+  if (!card) return;
+
+  const id = card.dataset.id;
+
+  const btn = e.target.closest(".btn");
+  if (btn) {
+    const action = btn.innerText.toLowerCase();
+
+    if (action === "interview") updateStatus(id, "applied");
+    if (action === "rejected") updateStatus(id, "rejected");
+
+    render();
+    return;
+  }
+
+  // Delete button click
+  const del = e.target.closest(".delete");
+  if (del) {
+    removeJob(id);
+    render();
+  }
+
 });
 
-document.querySelector("#tabs").addEventListener("click", (e) => {
-  if (!e.target.classList.contains("tab")) return;
-
-  const tabs = e.currentTarget.querySelectorAll(".tab");
-  tabs.forEach((tab) => tab.classList.remove("tab-active"));
-  e.target.classList.add("tab-active");
-
-  updateTab(e.target.innerText.trim().toLowerCase());
-
-  renderJobs(filteredJobs(selectedTab));
-});
-
-renderJobs(filteredJobs(selectedTab));
+render();

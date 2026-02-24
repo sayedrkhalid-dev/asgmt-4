@@ -28,11 +28,11 @@
       }
 
       .badge-applied {
-        @apply bg-green-100 text-green-500;
+        @apply bg-green-200 text-green-500;
       }
 
       .badge-rejected {
-        @apply bg-red-100 text-red-500;
+        @apply bg-red-200 text-red-500;
       }
 
       .btn-disabled {
@@ -42,70 +42,7 @@
   </head>
 
   <body class="font-sans text-gray-800 bg-gray-200 h-screen">
-    <div id="app" class="flex flex-col gap-6 max-w-[1110px] mx-auto p-4 h-full">
-      <div class="flex flex-col gap-4">
-        <h1 class="text-2xl font-semibold">Job Application Tracker</h1>
-
-        <!-- Tracker Cards -->
-        <div class="grid grid-cols-3 gap-4">
-          <div class="flex flex-col bg-gray-50 p-4 rounded-lg shadow">
-            <span class="text-xs font-semibold"> Total Jobs </span>
-            <span id="stat-total" class="text-xl font-bold">0</span>
-          </div>
-
-          <div class="flex flex-col bg-gray-50 p-4 rounded-lg shadow">
-            <span class="text-xs font-semibold"> Interview </span>
-            <span id="stat-interview" class="text-green-500 text-xl font-bold"
-              >0</span
-            >
-          </div>
-
-          <div class="flex flex-col bg-gray-50 p-4 rounded-lg shadow">
-            <span class="text-xs font-semibold"> Rejected </span>
-            <span id="stat-rejected" class="text-red-500 text-xl font-bold"
-              >0</span
-            >
-          </div>
-        </div>
-      </div>
-
-      <hr class="border-t border-gray-300" />
-
-      <!-- Available Jobs -->
-      <div class="flex flex-col gap-2 min-h-0 flex-1">
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-semibold">Available Jobs</h2>
-          <div class="text-gray-600 text-sm font-semibold">
-            <span id="job-count">0</span> Jobs
-          </div>
-        </div>
-
-        <!-- Tabs -->
-        <div id="tabs" class="flex gap-2 select-none">
-          <div
-            class="tab tab-active text-xs bg-gray-50 font-semibold px-4 py-2 rounded-lg shadow cursor-pointer transition-all"
-          >
-            All
-          </div>
-          <div
-            class="tab text-xs bg-gray-50 font-semibold px-4 py-2 rounded-lg shadow cursor-pointer transition-all"
-          >
-            Interview
-          </div>
-          <div
-            class="tab text-xs bg-gray-50 font-semibold px-4 py-2 rounded-lg shadow cursor-pointer transition-all"
-          >
-            Rejected
-          </div>
-        </div>
-
-        <!-- Jobs -->
-        <div class="flex flex-col">
-          <!-- Job lists -->
-          <div id="job-list"></div>
-        </div>
-      </div>
-    </div>
+    <div id="app" class="flex flex-col gap-6 max-w-[1110px] mx-auto p-4 h-full"></div>
 
     <script src="./script.js"></script>
   </body>
